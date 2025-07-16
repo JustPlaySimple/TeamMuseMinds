@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.school.mapper.AppEventRegMapper">
+    
+    <resultMap type="AppEventReg" id="AppEventRegResult">
+        <result property="registrationId"    column="registration_id"    />
+        <result property="eventId"    column="event_id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="status"    column="status"    />
+    </resultMap>
+
+    <sql id="selectAppEventRegVo">
+        select registration_id, event_id, user_id, status from app_event_reg
+    </sql>
+
+    <select id="selectAppEventRegList" parameterType="AppEventReg" resultMap="AppEventRegResult">
+        <include refid="selectAppEventRegVo"/>
+        <where>  
+            <if test="eventId != null "> and event_id = #{eventId}</if>
+            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+        </where>
+    </select>
+    
+    <select id="selectAppEventRegByRegistrationId" parameterType="Long" resultMap="AppEventRegResult">
+        <include refid="selectAppEventRegVo"/>
+        where registration_id = #{registrationId}
+    </select>
+
+    <insert id="insertAppEventReg" parameterType="AppEventReg" useGeneratedKeys="true" keyProperty="registrationId">
+        insert into app_event_reg
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="eventId != null">event_id,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="status != null">status,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="eventId != null">#{eventId},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="status != null">#{status},</if>
+         </trim>
+    </insert>
+
+    <update id="updateAppEventReg" parameterType="AppEventReg">
+        update app_event_reg
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="eventId != null">event_id = #{eventId},</if>
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="status != null">status = #{status},</if>
+        </trim>
+        where registration_id = #{registrationId}
+    </update>
+
+    <delete id="deleteAppEventRegByRegistrationId" parameterType="Long">
+        delete from app_event_reg where registration_id = #{registrationId}
+    </delete>
+
+    <delete id="deleteAppEventRegByRegistrationIds" parameterType="String">
+        delete from app_event_reg where registration_id in 
+        <foreach item="registrationId" collection="array" open="(" separator="," close=")">
+            #{registrationId}
+        </foreach>
+    </delete>
+</mapper>

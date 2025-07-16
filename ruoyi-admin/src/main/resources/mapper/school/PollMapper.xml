@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.school.mapper.PollMapper">
+    
+    <resultMap type="Poll" id="PollResult">
+        <result property="pollId"    column="poll_id"    />
+        <result property="title"    column="title"    />
+        <result property="description"    column="description"    />
+        <result property="creatorId"    column="creator_id"    />
+        <result property="isMultiple"    column="is_multiple"    />
+        <result property="maxChoices"    column="max_choices"    />
+        <result property="startTime"    column="start_time"    />
+        <result property="endTime"    column="end_time"    />
+    </resultMap>
+
+    <sql id="selectPollVo">
+        select poll_id, title, description, creator_id, is_multiple, max_choices, start_time, end_time from poll
+    </sql>
+
+    <select id="selectPollList" parameterType="Poll" resultMap="PollResult">
+        <include refid="selectPollVo"/>
+        <where>  
+            <if test="title != null  and title != ''"> and title = #{title}</if>
+            <if test="description != null  and description != ''"> and description = #{description}</if>
+            <if test="creatorId != null "> and creator_id = #{creatorId}</if>
+            <if test="isMultiple != null "> and is_multiple = #{isMultiple}</if>
+            <if test="maxChoices != null "> and max_choices = #{maxChoices}</if>
+            <if test="startTime != null "> and start_time = #{startTime}</if>
+            <if test="endTime != null "> and end_time = #{endTime}</if>
+        </where>
+    </select>
+    
+    <select id="selectPollByPollId" parameterType="Long" resultMap="PollResult">
+        <include refid="selectPollVo"/>
+        where poll_id = #{pollId}
+    </select>
+
+    <insert id="insertPoll" parameterType="Poll" useGeneratedKeys="true" keyProperty="pollId">
+        insert into poll
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="title != null and title != ''">title,</if>
+            <if test="description != null">description,</if>
+            <if test="creatorId != null">creator_id,</if>
+            <if test="isMultiple != null">is_multiple,</if>
+            <if test="maxChoices != null">max_choices,</if>
+            <if test="startTime != null">start_time,</if>
+            <if test="endTime != null">end_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="title != null and title != ''">#{title},</if>
+            <if test="description != null">#{description},</if>
+            <if test="creatorId != null">#{creatorId},</if>
+            <if test="isMultiple != null">#{isMultiple},</if>
+            <if test="maxChoices != null">#{maxChoices},</if>
+            <if test="startTime != null">#{startTime},</if>
+            <if test="endTime != null">#{endTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updatePoll" parameterType="Poll">
+        update poll
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="title != null and title != ''">title = #{title},</if>
+            <if test="description != null">description = #{description},</if>
+            <if test="creatorId != null">creator_id = #{creatorId},</if>
+            <if test="isMultiple != null">is_multiple = #{isMultiple},</if>
+            <if test="maxChoices != null">max_choices = #{maxChoices},</if>
+            <if test="startTime != null">start_time = #{startTime},</if>
+            <if test="endTime != null">end_time = #{endTime},</if>
+        </trim>
+        where poll_id = #{pollId}
+    </update>
+
+    <delete id="deletePollByPollId" parameterType="Long">
+        delete from poll where poll_id = #{pollId}
+    </delete>
+
+    <delete id="deletePollByPollIds" parameterType="String">
+        delete from poll where poll_id in 
+        <foreach item="pollId" collection="array" open="(" separator="," close=")">
+            #{pollId}
+        </foreach>
+    </delete>
+</mapper>

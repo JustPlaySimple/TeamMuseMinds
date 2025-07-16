@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.school.mapper.PollRecordMapper">
+    
+    <resultMap type="PollRecord" id="PollRecordResult">
+        <result property="recordId"    column="record_id"    />
+        <result property="pollId"    column="poll_id"    />
+        <result property="optionId"    column="option_id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="ipAddress"    column="ip_address"    />
+        <result property="voteTime"    column="vote_time"    />
+    </resultMap>
+
+    <sql id="selectPollRecordVo">
+        select record_id, poll_id, option_id, user_id, ip_address, vote_time from poll_record
+    </sql>
+
+    <select id="selectPollRecordList" parameterType="PollRecord" resultMap="PollRecordResult">
+        <include refid="selectPollRecordVo"/>
+        <where>  
+            <if test="pollId != null "> and poll_id = #{pollId}</if>
+            <if test="optionId != null "> and option_id = #{optionId}</if>
+            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="ipAddress != null  and ipAddress != ''"> and ip_address = #{ipAddress}</if>
+            <if test="voteTime != null "> and vote_time = #{voteTime}</if>
+        </where>
+    </select>
+    
+    <select id="selectPollRecordByRecordId" parameterType="Long" resultMap="PollRecordResult">
+        <include refid="selectPollRecordVo"/>
+        where record_id = #{recordId}
+    </select>
+
+    <insert id="insertPollRecord" parameterType="PollRecord" useGeneratedKeys="true" keyProperty="recordId">
+        insert into poll_record
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="pollId != null">poll_id,</if>
+            <if test="optionId != null">option_id,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="ipAddress != null">ip_address,</if>
+            <if test="voteTime != null">vote_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="pollId != null">#{pollId},</if>
+            <if test="optionId != null">#{optionId},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="ipAddress != null">#{ipAddress},</if>
+            <if test="voteTime != null">#{voteTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updatePollRecord" parameterType="PollRecord">
+        update poll_record
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="pollId != null">poll_id = #{pollId},</if>
+            <if test="optionId != null">option_id = #{optionId},</if>
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="ipAddress != null">ip_address = #{ipAddress},</if>
+            <if test="voteTime != null">vote_time = #{voteTime},</if>
+        </trim>
+        where record_id = #{recordId}
+    </update>
+
+    <delete id="deletePollRecordByRecordId" parameterType="Long">
+        delete from poll_record where record_id = #{recordId}
+    </delete>
+
+    <delete id="deletePollRecordByRecordIds" parameterType="String">
+        delete from poll_record where record_id in 
+        <foreach item="recordId" collection="array" open="(" separator="," close=")">
+            #{recordId}
+        </foreach>
+    </delete>
+</mapper>
