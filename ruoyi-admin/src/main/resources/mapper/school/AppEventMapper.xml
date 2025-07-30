@@ -23,13 +23,13 @@
     <select id="selectAppEventList" parameterType="AppEvent" resultMap="AppEventResult">
         <include refid="selectAppEventVo"/>
         <where>
+            event_status != 999
             <if test="createUserId != null "> and create_user_id = #{createUserId}</if>
             <if test="title != null  and title != ''"> and title = #{title}</if>
             <if test="description != null  and description != ''"> and description = #{description}</if>
             <if test="startTime != null "> and start_time = #{startTime}</if>
             <if test="endTime != null "> and end_time = #{endTime}</if>
             <if test="registerUserId != null "> and register_user_id = #{registerUserId}</if>
-            <if test="eventStatus != null "> and event_status = #{eventStatus}</if>
             <if test="images != null  and images != ''"> and images = #{images}</if>
         </where>
     </select>

@@ -5,14 +5,14 @@ spring:
         driverClassName: com.mysql.cj.jdbc.Driver
         druid:
             # Main database
-            master:
-                url: jdbc:mysql://localhost:3306/MUSEngage?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
-                username: root
-                password: Xbb941122
 #            master:
-#                url: jdbc:mysql://musengage.cpgewo428h7c.ap-southeast-1.rds.amazonaws.com:3306/MUSEngage?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
-#                username: admin
-#                password: xbb941122
+#                url: jdbc:mysql://localhost:3306/MUSEngage?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+#                username: root
+#                password: Xbb941122
+            master:
+                url: jdbc:mysql://musengage.cpgewo428h7c.ap-southeast-1.rds.amazonaws.com:3306/MUSEngage?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+                username: admin
+                password: xbb941122
             # Secondary (slave) database
             slave:
                 # Slave datasource switch / disabled by default

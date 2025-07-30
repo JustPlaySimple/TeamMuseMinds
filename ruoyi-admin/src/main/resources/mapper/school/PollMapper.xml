@@ -13,10 +13,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="maxChoices"    column="max_choices"    />
         <result property="startTime"    column="start_time"    />
         <result property="endTime"    column="end_time"    />
+        <result property="creatorName" column="creator_name"/>
+        <collection property="options" ofType="PollOption" column="poll_id"
+                    select="com.ruoyi.school.mapper.PollOptionMapper.selectOptionWithVoteCountByPollId" />
     </resultMap>
 
     <sql id="selectPollVo">
-        select poll_id, title, description, creator_id, is_multiple, max_choices, start_time, end_time from poll
+        select poll_id, title, description, creator_id, is_multiple, max_choices, start_time, end_time, u.nick_name AS creator_name
+        FROM poll p
+                 LEFT JOIN sys_user u ON p.creator_id = u.user_id
     </sql>
 
     <select id="selectPollList" parameterType="Poll" resultMap="PollResult">
@@ -83,4 +88,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{pollId}
         </foreach>
     </delete>
+
+
 </mapper>

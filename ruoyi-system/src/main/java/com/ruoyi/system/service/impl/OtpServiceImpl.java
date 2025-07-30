@@ -14,6 +14,9 @@ import org.springframework.stereotype.Service;
 import java.util.Random;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
+import java.net.URLEncoder;
+
+
 @Service
 public class OtpServiceImpl implements IOtpService {
 
@@ -33,7 +36,7 @@ public class OtpServiceImpl implements IOtpService {
 
     @Override
     public void sendOtpEmail(String toEmail) throws IOException {
-        Email from = new Email("Emtforever@outlook.com"); // Replace with verified sender
+        Email from = new Email("musengageteam@musengage.top"); // Replace with verified sender
         String subject = "Your OTP Code";
         Email to = new Email(toEmail);
         String otp = String.format("%06d", new Random().nextInt(999999));
@@ -43,20 +46,51 @@ public class OtpServiceImpl implements IOtpService {
 
         SendGrid sg = new SendGrid(sendGridApiKey);
         Request request = new Request();
+        request.setMethod(Method.POST);
+        request.setEndpoint("mail/send");
+        request.setBody(mail.build());
+        Response response = sg.api(request);
 
-        try {
-            request.setMethod(Method.POST);
-            request.setEndpoint("mail/send");
-            request.setBody(mail.build());
-            Response response = sg.api(request);
+        System.out.println("SendGrid response: " + response.getStatusCode());
+        System.out.println(response.getBody());
+        System.out.println(response.getHeaders());
 
-            System.out.println("SendGrid response: " + response.getStatusCode());
-            System.out.println(response.getBody());
-            System.out.println(response.getHeaders());
-        } catch (IOException ex) {
-            throw ex;
-        }
+
+
+
     }
+
+    public void sendInviteEmail(String toEmail, String password) throws IOException {
+        Email from = new Email("musengageteam@musengage.top");
+        String subject = "You're Invited to Join MUSEngage!";
+        Email to = new Email(toEmail);
+
+        String encodedEmail = URLEncoder.encode(toEmail, "UTF-8");
+
+        String inviteMessage = "Hello,\n\n" +
+                "You have been invited to join the MUSEngage platform — your gateway to staying connected with campus events, merchandise, polls, and more.\n\n" +
+                "Click the link below to get started:\n" +
+                "https://www.musengage.top\n" +
+                "The initial password: " + password + "\n" +
+                "Thank you,\n" +
+                "The MUSEngage Team";
+
+        Content content = new Content("text/plain", inviteMessage);
+        Mail mail = new Mail(from, subject, to, content);
+
+        SendGrid sg = new SendGrid(sendGridApiKey);
+        Request request = new Request();
+
+        request.setMethod(Method.POST);
+        request.setEndpoint("mail/send");
+        request.setBody(mail.build());
+        Response response = sg.api(request);
+
+        System.out.println("SendGrid response: " + response.getStatusCode());
+        System.out.println(response.getBody());
+        System.out.println(response.getHeaders());
+    }
+
 
 
     @Override

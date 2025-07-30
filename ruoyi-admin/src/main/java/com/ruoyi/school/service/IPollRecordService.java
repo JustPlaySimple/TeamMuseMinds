@@ -58,4 +58,6 @@ public interface IPollRecordService
      * @return 结果
      */
     public int deletePollRecordByRecordId(Long recordId);
+
+    public int countUserVotes(PollRecord pollRecord);
 }

@@ -30,6 +30,8 @@ import com.ruoyi.framework.security.context.AuthenticationContextHolder;
 import com.ruoyi.system.service.ISysConfigService;
 import com.ruoyi.system.service.ISysUserService;
 import com.ruoyi.system.service.IOtpService;
+import org.springframework.web.bind.annotation.PostMapping;
+
 import java.util.concurrent.TimeUnit;
 
 
@@ -298,4 +300,6 @@ public class SysLoginService
         sysUser.setLoginDate(DateUtils.getNowDate());
         userService.updateUserProfile(sysUser);
     }
+
+
 }

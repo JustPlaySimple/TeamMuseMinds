@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.school.mapper.UserTimetableMapper">
+    
+    <resultMap type="UserTimetable" id="UserTimetableResult">
+        <result property="id"    column="id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="title"    column="title"    />
+        <result property="dayOfWeek"    column="day_of_week"    />
+        <result property="startTime"    column="start_time"    />
+        <result property="endTime"    column="end_time"    />
+        <result property="description"    column="description"    />
+    </resultMap>
+
+    <sql id="selectUserTimetableVo">
+        select id, user_id, title, day_of_week, start_time, end_time, description from user_timetable
+    </sql>
+
+    <select id="selectUserTimetableList" parameterType="UserTimetable" resultMap="UserTimetableResult">
+        <include refid="selectUserTimetableVo"/>
+        <where>  
+            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="title != null  and title != ''"> and title = #{title}</if>
+            <if test="dayOfWeek != null  and dayOfWeek != ''"> and day_of_week = #{dayOfWeek}</if>
+            <if test="startTime != null "> and start_time = #{startTime}</if>
+            <if test="endTime != null "> and end_time = #{endTime}</if>
+            <if test="description != null  and description != ''"> and description = #{description}</if>
+        </where>
+    </select>
+    
+    <select id="selectUserTimetableById" parameterType="Long" resultMap="UserTimetableResult">
+        <include refid="selectUserTimetableVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertUserTimetable" parameterType="UserTimetable" useGeneratedKeys="true" keyProperty="id">
+        insert into user_timetable
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">user_id,</if>
+            <if test="title != null">title,</if>
+            <if test="dayOfWeek != null">day_of_week,</if>
+            <if test="startTime != null">start_time,</if>
+            <if test="endTime != null">end_time,</if>
+            <if test="description != null">description,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">#{userId},</if>
+            <if test="title != null">#{title},</if>
+            <if test="dayOfWeek != null">#{dayOfWeek},</if>
+            <if test="startTime != null">#{startTime},</if>
+            <if test="endTime != null">#{endTime},</if>
+            <if test="description != null">#{description},</if>
+         </trim>
+    </insert>
+
+    <update id="updateUserTimetable" parameterType="UserTimetable">
+        update user_timetable
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="title != null">title = #{title},</if>
+            <if test="dayOfWeek != null">day_of_week = #{dayOfWeek},</if>
+            <if test="startTime != null">start_time = #{startTime},</if>
+            <if test="endTime != null">end_time = #{endTime},</if>
+            <if test="description != null">description = #{description},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteUserTimetableById" parameterType="Long">
+        delete from user_timetable where id = #{id}
+    </delete>
+
+    <delete id="deleteUserTimetableByIds" parameterType="String">
+        delete from user_timetable where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

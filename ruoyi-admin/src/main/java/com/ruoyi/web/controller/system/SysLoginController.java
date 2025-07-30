@@ -75,7 +75,7 @@ public class SysLoginController
         return AjaxResult.success("token", token);
     }
 
-    @PostMapping("/preLogin")
+    @PostMapping("/api/preLogin")
     public AjaxResult preLogin(@RequestBody LoginBody loginBody)
     {
         AjaxResult ajax = AjaxResult.success();
@@ -85,7 +85,7 @@ public class SysLoginController
         return ajax;
     }
 
-    @PostMapping("/sendOtp")
+    @PostMapping("/api/sendOtp")
     public AjaxResult sendOtp(@RequestBody LoginBody loginBody)
     {
         AjaxResult ajax = AjaxResult.success();
@@ -94,7 +94,7 @@ public class SysLoginController
         return ajax;
     }
 
-    @PostMapping("/verifyOtpAndLogin")
+    @PostMapping("/api/verifyOtpAndLogin")
     public AjaxResult verifyOtpAndLogin(@RequestBody OtpLoginBody otpLoginBody) {
         String token = loginService.verifyOtpAndLogin(otpLoginBody.getEmail(), otpLoginBody.getOtp());
         return AjaxResult.success("token", token);
@@ -106,7 +106,7 @@ public class SysLoginController
      * 
      * @return 用户信息
      */
-    @GetMapping("getInfo")
+    @PostMapping("/api/user/getInfo")
     public AjaxResult getInfo()
     {
         LoginUser loginUser = SecurityUtils.getLoginUser();

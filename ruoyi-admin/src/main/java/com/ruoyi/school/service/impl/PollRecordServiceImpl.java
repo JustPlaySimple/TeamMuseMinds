@@ -90,4 +90,10 @@ public class PollRecordServiceImpl implements IPollRecordService
     {
         return pollRecordMapper.deletePollRecordByRecordId(recordId);
     }
+
+    @Override
+    public int countUserVotes(PollRecord pollRecord)
+    {
+        return pollRecordMapper.countUserVotes(pollRecord);
+    }
 }

@@ -39,9 +39,11 @@ public class FeedbackController extends BaseController
      */
 
     @PostMapping("/list")
-    public TableDataInfo list(Feedback feedback)
+    public TableDataInfo list(@RequestBody Feedback feedback)
     {
         startPage();
+        System.out.println("feedbackType = " + feedback.getFeedbackType());
+
         List<Feedback> list = feedbackService.selectFeedbackList(feedback);
         return getDataTable(list);
     }

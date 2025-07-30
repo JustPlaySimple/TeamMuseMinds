@@ -26,6 +26,8 @@ public class LoginBody
      * 唯一标识
      */
     private String uuid;
+
+    private String userType;
     /**
      * username
      */
@@ -80,4 +82,15 @@ public class LoginBody
     {
         this.username = username;
     }
+
+    public String getUserType()
+    {
+        return userType;
+    }
+
+    public void setUserType(String userType)
+    {
+        this.userType = userType;
+    }
+
 }

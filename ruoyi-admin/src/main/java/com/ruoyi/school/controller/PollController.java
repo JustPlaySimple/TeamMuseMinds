@@ -17,7 +17,9 @@ import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.school.domain.Poll;
+import com.ruoyi.school.domain.PollOption;
 import com.ruoyi.school.service.IPollService;
+import com.ruoyi.school.service.IPollOptionService;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.common.core.page.TableDataInfo;
 
@@ -28,17 +30,20 @@ import com.ruoyi.common.core.page.TableDataInfo;
  * @date 2025-07-16
  */
 @RestController
-@RequestMapping("/school/poll")
+@RequestMapping("/api/school/poll")
 public class PollController extends BaseController
 {
     @Autowired
     private IPollService pollService;
 
+    @Autowired
+    private IPollOptionService pollOptionService;
+
     /**
      * 查询poll列表
      */
-    @PreAuthorize("@ss.hasPermi('school:poll:list')")
-    @GetMapping("/list")
+
+    @PostMapping("/list")
     public TableDataInfo list(Poll poll)
     {
         startPage();
@@ -49,7 +54,7 @@ public class PollController extends BaseController
     /**
      * 导出poll列表
      */
-    @PreAuthorize("@ss.hasPermi('school:poll:export')")
+
     @Log(title = "poll", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(HttpServletResponse response, Poll poll)
@@ -62,7 +67,7 @@ public class PollController extends BaseController
     /**
      * 获取poll详细信息
      */
-    @PreAuthorize("@ss.hasPermi('school:poll:query')")
+
     @GetMapping(value = "/{pollId}")
     public AjaxResult getInfo(@PathVariable("pollId") Long pollId)
     {
@@ -72,18 +77,37 @@ public class PollController extends BaseController
     /**
      * 新增poll
      */
-    @PreAuthorize("@ss.hasPermi('school:poll:add')")
+
     @Log(title = "poll", businessType = BusinessType.INSERT)
-    @PostMapping
+    @PostMapping("/add")
     public AjaxResult add(@RequestBody Poll poll)
     {
         return toAjax(pollService.insertPoll(poll));
     }
 
+
+    @PostMapping("/addWithOptions")
+    public AjaxResult addWithOptions(@RequestBody Poll poll) {
+
+        int result = pollService.insertPoll(poll); // 这一步之后 poll.pollId 已被自动设置（useGeneratedKeys）
+
+
+        if (poll.getOptions() != null) {
+            for (PollOption option : poll.getOptions()) {
+                option.setPollId(poll.getPollId()); // 关键！设置 pollId
+                pollOptionService.insertPollOption(option);
+            }
+        }
+        return toAjax(result);
+    }
+
+
+
+
     /**
      * 修改poll
      */
-    @PreAuthorize("@ss.hasPermi('school:poll:edit')")
+
     @Log(title = "poll", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@RequestBody Poll poll)
@@ -94,7 +118,7 @@ public class PollController extends BaseController
     /**
      * 删除poll
      */
-    @PreAuthorize("@ss.hasPermi('school:poll:remove')")
+
     @Log(title = "poll", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{pollIds}")
     public AjaxResult remove(@PathVariable Long[] pollIds)

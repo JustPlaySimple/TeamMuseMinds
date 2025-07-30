@@ -20,8 +20,8 @@ import com.ruoyi.system.service.ISysConfigService;
 import com.ruoyi.system.service.ISysUserService;
 
 /**
- * 注册校验方法
- * 
+ * Registration validation service
+ *
  * @author ruoyi
  */
 @Component
@@ -37,68 +37,74 @@ public class SysRegisterService
     private RedisCache redisCache;
 
     /**
-     * 注册
+     * Register a new user
+     *
+     * @param registerBody registration information (username/email, password, captcha, etc.)
+     * @return error message if any, empty string means success
      */
     public String register(RegisterBody registerBody)
     {
-        String msg = "", username = registerBody.getEmail(), password = registerBody.getPassword();
-        SysUser sysUser = new SysUser();
-        sysUser.setUserName(username);
+        String msg = "";
+        String Email = registerBody.getEmail();
+        String password = registerBody.getPassword();
 
-        // 验证码开关
+        SysUser sysUser = new SysUser();
+        sysUser.setEmail(Email);
+        sysUser.setUserName(Email.length() > 20 ? Email.substring(0, 20) : Email);
+        sysUser.setUserType(registerBody.getUserType());
+        // Captcha enabled switch
         boolean captchaEnabled = configService.selectCaptchaEnabled();
 //        if (captchaEnabled)
 //        {
 //            validateCaptcha(username, registerBody.getCode(), registerBody.getUuid());
 //        }
 
-        if (StringUtils.isEmpty(username))
+        if (StringUtils.isEmpty(Email))
         {
-            msg = "用户名不能为空";
+            msg = "Email cannot be empty";
         }
         else if (StringUtils.isEmpty(password))
         {
-            msg = "用户密码不能为空";
+            msg = "User password cannot be empty";
         }
-        else if (username.length() < UserConstants.USERNAME_MIN_LENGTH
-                || username.length() > UserConstants.USERNAME_MAX_LENGTH)
-        {
-            msg = "账户长度必须在2到20个字符之间";
-        }
-        else if (password.length() < UserConstants.PASSWORD_MIN_LENGTH
-                || password.length() > UserConstants.PASSWORD_MAX_LENGTH)
-        {
-            msg = "密码长度必须在5到20个字符之间";
-        }
+//        else if (Email.length() < UserConstants.USERNAME_MIN_LENGTH
+//                || Email.length() > UserConstants.USERNAME_MAX_LENGTH)
+//        {
+//            msg = "Username length must be between 2 and 20 characters";
+//        }
+//        else if (password.length() < UserConstants.PASSWORD_MIN_LENGTH
+//                || password.length() > UserConstants.PASSWORD_MAX_LENGTH)
+//        {
+//            msg = "Password length must be between 5 and 20 characters";
+//        }
         else if (!userService.checkUserNameUnique(sysUser))
         {
-            msg = "保存用户'" + username + "'失败，注册账号已存在";
+            msg = "Failed to save user '" + Email + "', registration account already exists";
         }
         else
         {
-            sysUser.setNickName(username);
+            sysUser.setNickName("Lucky");
             sysUser.setPwdUpdateDate(DateUtils.getNowDate());
             sysUser.setPassword(SecurityUtils.encryptPassword(password));
             boolean regFlag = userService.registerUser(sysUser);
             if (!regFlag)
             {
-                msg = "注册失败,请联系系统管理人员";
+                msg = "Registration failed, please contact system administrator";
             }
             else
             {
-                AsyncManager.me().execute(AsyncFactory.recordLogininfor(username, Constants.REGISTER, MessageUtils.message("user.register.success")));
+                AsyncManager.me().execute(AsyncFactory.recordLogininfor(Email, Constants.REGISTER, MessageUtils.message("user.register.success")));
             }
         }
         return msg;
     }
 
     /**
-     * 校验验证码
-     * 
-     * @param username 用户名
-     * @param code 验证码
-     * @param uuid 唯一标识
-     * @return 结果
+     * Validate captcha code
+     *
+     * @param username the username
+     * @param code captcha code input
+     * @param uuid unique identifier for captcha
      */
     public void validateCaptcha(String username, String code, String uuid)
     {

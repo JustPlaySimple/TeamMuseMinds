@@ -37,7 +37,7 @@ public class PollOptionController extends BaseController
     /**
      * 查询poll option列表
      */
-    @PreAuthorize("@ss.hasPermi('school:option:list')")
+
     @GetMapping("/list")
     public TableDataInfo list(PollOption pollOption)
     {
@@ -49,7 +49,7 @@ public class PollOptionController extends BaseController
     /**
      * 导出poll option列表
      */
-    @PreAuthorize("@ss.hasPermi('school:option:export')")
+
     @Log(title = "poll option", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(HttpServletResponse response, PollOption pollOption)
@@ -62,7 +62,7 @@ public class PollOptionController extends BaseController
     /**
      * 获取poll option详细信息
      */
-    @PreAuthorize("@ss.hasPermi('school:option:query')")
+
     @GetMapping(value = "/{optionId}")
     public AjaxResult getInfo(@PathVariable("optionId") Long optionId)
     {
@@ -72,7 +72,7 @@ public class PollOptionController extends BaseController
     /**
      * 新增poll option
      */
-    @PreAuthorize("@ss.hasPermi('school:option:add')")
+
     @Log(title = "poll option", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody PollOption pollOption)
@@ -83,7 +83,7 @@ public class PollOptionController extends BaseController
     /**
      * 修改poll option
      */
-    @PreAuthorize("@ss.hasPermi('school:option:edit')")
+
     @Log(title = "poll option", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@RequestBody PollOption pollOption)
@@ -94,7 +94,7 @@ public class PollOptionController extends BaseController
     /**
      * 删除poll option
      */
-    @PreAuthorize("@ss.hasPermi('school:option:remove')")
+
     @Log(title = "poll option", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{optionIds}")
     public AjaxResult remove(@PathVariable Long[] optionIds)

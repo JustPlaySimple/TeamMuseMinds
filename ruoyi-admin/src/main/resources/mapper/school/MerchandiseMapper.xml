@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.school.mapper.MerchandiseMapper">
+    
+    <resultMap type="Merchandise" id="MerchandiseResult">
+        <result property="merchandiseId"    column="merchandise_id"    />
+        <result property="goodsName"    column="goods_name"    />
+        <result property="goodsDescription"    column="goods_description"    />
+        <result property="stock"    column="stock"    />
+        <result property="price"    column="price"    />
+        <result property="image"    column="image"    />
+        <result property="size"    column="size"    />
+    </resultMap>
+
+    <sql id="selectMerchandiseVo">
+        select merchandise_id, goods_name, goods_description, stock, price, image, size from merchandise
+    </sql>
+
+    <select id="selectMerchandiseList" parameterType="Merchandise" resultMap="MerchandiseResult">
+        <include refid="selectMerchandiseVo"/>
+        <where>  
+            <if test="goodsName != null  and goodsName != ''"> and goods_name like concat('%', #{goodsName}, '%')</if>
+            <if test="goodsDescription != null  and goodsDescription != ''"> and goods_description = #{goodsDescription}</if>
+            <if test="stock != null "> and stock = #{stock}</if>
+            <if test="price != null "> and price = #{price}</if>
+            <if test="image != null  and image != ''"> and image = #{image}</if>
+            <if test="size != null  and size != ''"> and size = #{size}</if>
+        </where>
+    </select>
+    
+    <select id="selectMerchandiseByMerchandiseId" parameterType="Long" resultMap="MerchandiseResult">
+        <include refid="selectMerchandiseVo"/>
+        where merchandise_id = #{merchandiseId}
+    </select>
+
+    <insert id="insertMerchandise" parameterType="Merchandise" useGeneratedKeys="true" keyProperty="merchandiseId">
+        insert into merchandise
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="goodsName != null and goodsName != ''">goods_name,</if>
+            <if test="goodsDescription != null">goods_description,</if>
+            <if test="stock != null">stock,</if>
+            <if test="price != null">price,</if>
+            <if test="image != null">image,</if>
+            <if test="size != null">size,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="goodsName != null and goodsName != ''">#{goodsName},</if>
+            <if test="goodsDescription != null">#{goodsDescription},</if>
+            <if test="stock != null">#{stock},</if>
+            <if test="price != null">#{price},</if>
+            <if test="image != null">#{image},</if>
+            <if test="size != null">#{size},</if>
+         </trim>
+    </insert>
+
+    <update id="updateMerchandise" parameterType="Merchandise">
+        update merchandise
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="goodsName != null and goodsName != ''">goods_name = #{goodsName},</if>
+            <if test="goodsDescription != null">goods_description = #{goodsDescription},</if>
+            <if test="stock != null">stock = #{stock},</if>
+            <if test="price != null">price = #{price},</if>
+            <if test="image != null">image = #{image},</if>
+            <if test="size != null">size = #{size},</if>
+        </trim>
+        where merchandise_id = #{merchandiseId}
+    </update>
+
+    <delete id="deleteMerchandiseByMerchandiseId" parameterType="Long">
+        delete from merchandise where merchandise_id = #{merchandiseId}
+    </delete>
+
+    <delete id="deleteMerchandiseByMerchandiseIds" parameterType="String">
+        delete from merchandise where merchandise_id in
+        <foreach item="merchandiseId" collection="array" open="(" separator="," close=")">
+            #{merchandiseId}
+        </foreach>
+    </delete>
+</mapper>

@@ -26,12 +26,12 @@ public class R<T> implements Serializable
 
     public static <T> R<T> ok()
     {
-        return restResult(null, SUCCESS, "操作成功");
+        return restResult(null, SUCCESS, "success");
     }
 
     public static <T> R<T> ok(T data)
     {
-        return restResult(data, SUCCESS, "操作成功");
+        return restResult(data, SUCCESS, "success");
     }
 
     public static <T> R<T> ok(T data, String msg)

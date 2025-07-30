@@ -1,6 +1,8 @@
 package com.ruoyi.school.domain;
 
 import java.util.Date;
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -32,6 +34,11 @@ public class Poll extends BaseEntity
     @Excel(name = "${comment}", readConverterExp = "$column.readConverterExp()")
     private Long creatorId;
 
+    @Excel(name = "${comment}", readConverterExp = "$column.readConverterExp()")
+    private Long userId;
+
+    private String creatorName;
+
     /** $column.columnComment */
     @Excel(name = "${comment}", readConverterExp = "$column.readConverterExp()")
     private Integer isMultiple;
@@ -43,6 +50,11 @@ public class Poll extends BaseEntity
     /** $column.columnComment */
     @Excel(name = "${comment}", readConverterExp = "$column.readConverterExp()")
     private Date startTime;
+
+    private List<PollOption> options; // 添加这一行
+
+    private boolean userVoted;
+
 
     /** $column.columnComment */
     @Excel(name = "${comment}", readConverterExp = "$column.readConverterExp()")
@@ -88,6 +100,30 @@ public class Poll extends BaseEntity
         return creatorId;
     }
 
+    public void setCreatorName(String creatorName)
+    {
+        this.creatorName = creatorName;
+    }
+
+    public String getCreatorName()
+    {
+        return creatorName;
+    }
+
+
+
+    public void setUserId(Long userId)
+    {
+        this.userId = userId;
+    }
+
+    public Long getUserId()
+    {
+        return userId;
+    }
+
+
+
     public void setIsMultiple(Integer isMultiple) 
     {
         this.isMultiple = isMultiple;
@@ -117,6 +153,23 @@ public class Poll extends BaseEntity
     {
         return startTime;
     }
+
+    public void setOptions(List<PollOption> options) {
+        this.options = options;
+    }
+
+    public List<PollOption> getOptions() {
+        return options;
+    }
+
+    public void setUserVoted(boolean userVoted) {
+        this.userVoted = userVoted;
+    }
+
+    public boolean getUserVoted() {
+        return userVoted;
+    }
+
 
     public void setEndTime(Date endTime) 
     {

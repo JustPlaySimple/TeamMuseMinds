@@ -28,7 +28,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
  * @date 2025-07-16
  */
 @RestController
-@RequestMapping("/school/record")
+@RequestMapping("/api/school/record")
 public class PollRecordController extends BaseController
 {
     @Autowired
@@ -37,7 +37,7 @@ public class PollRecordController extends BaseController
     /**
      * 查询poll record列表
      */
-    @PreAuthorize("@ss.hasPermi('school:record:list')")
+
     @GetMapping("/list")
     public TableDataInfo list(PollRecord pollRecord)
     {
@@ -49,7 +49,7 @@ public class PollRecordController extends BaseController
     /**
      * 导出poll record列表
      */
-    @PreAuthorize("@ss.hasPermi('school:record:export')")
+
     @Log(title = "poll record", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(HttpServletResponse response, PollRecord pollRecord)
@@ -62,7 +62,7 @@ public class PollRecordController extends BaseController
     /**
      * 获取poll record详细信息
      */
-    @PreAuthorize("@ss.hasPermi('school:record:query')")
+
     @GetMapping(value = "/{recordId}")
     public AjaxResult getInfo(@PathVariable("recordId") Long recordId)
     {
@@ -72,18 +72,27 @@ public class PollRecordController extends BaseController
     /**
      * 新增poll record
      */
-    @PreAuthorize("@ss.hasPermi('school:record:add')")
+
     @Log(title = "poll record", businessType = BusinessType.INSERT)
-    @PostMapping
+    @PostMapping("/add")
     public AjaxResult add(@RequestBody PollRecord pollRecord)
     {
+        Long userId = pollRecord.getUserId(); // 可能为 null
+
+        // 如果传入了 userId，则检查是否已投票
+        if (userId != null && pollRecord.getPollId() != null) {
+            Integer count = pollRecordService.countUserVotes(pollRecord);
+            if (count !=null && count > 0) {
+                return AjaxResult.error("You have already voted.");
+            }
+        }
         return toAjax(pollRecordService.insertPollRecord(pollRecord));
     }
 
     /**
      * 修改poll record
      */
-    @PreAuthorize("@ss.hasPermi('school:record:edit')")
+
     @Log(title = "poll record", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@RequestBody PollRecord pollRecord)
@@ -94,7 +103,7 @@ public class PollRecordController extends BaseController
     /**
      * 删除poll record
      */
-    @PreAuthorize("@ss.hasPermi('school:record:remove')")
+
     @Log(title = "poll record", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{recordIds}")
     public AjaxResult remove(@PathVariable Long[] recordIds)

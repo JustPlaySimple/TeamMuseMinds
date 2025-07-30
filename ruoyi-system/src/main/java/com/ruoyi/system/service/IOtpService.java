@@ -13,6 +13,8 @@ public interface IOtpService {
      */
     void sendOtpEmail(String toEmail) throws IOException;
 
+    void sendInviteEmail(String toEmail, String password) throws IOException;
+
     boolean verifyOtp(String email, String otp);
 
 }

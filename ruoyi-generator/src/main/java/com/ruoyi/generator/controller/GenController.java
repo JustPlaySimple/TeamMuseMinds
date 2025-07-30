@@ -124,7 +124,6 @@ public class GenController extends BaseController
     /**
      * 创建表结构（保存）
      */
-    @PreAuthorize("@ss.hasRole('admin')")
     @Log(title = "创建表", businessType = BusinessType.OTHER)
     @PostMapping("/createTable")
     public AjaxResult createTableSave(String sql)

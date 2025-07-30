@@ -58,4 +58,5 @@ public interface IPollService
      * @return 结果
      */
     public int deletePollByPollId(Long pollId);
+
 }

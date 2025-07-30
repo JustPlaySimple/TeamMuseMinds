@@ -16,18 +16,39 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </sql>
 
     <select id="selectPollOptionList" parameterType="PollOption" resultMap="PollOptionResult">
-        <include refid="selectPollOptionVo"/>
-        <where>  
-            <if test="pollId != null "> and poll_id = #{pollId}</if>
-            <if test="optionText != null  and optionText != ''"> and option_text = #{optionText}</if>
-            <if test="voteCount != null "> and vote_count = #{voteCount}</if>
+        SELECT
+        o.option_id,
+        o.poll_id,
+        o.option_text,
+        COUNT(r.record_id) AS vote_count
+        FROM poll_option o
+        LEFT JOIN poll_record r ON o.option_id = r.option_id
+        <where>
+            <if test="pollId != null"> AND o.poll_id = #{pollId} </if>
+            <if test="optionText != null and optionText != ''"> AND o.option_text = #{optionText} </if>
+            <!-- voteCount 是统计字段，不在 where 中过滤 -->
         </where>
+        GROUP BY o.option_id, o.poll_id, o.option_text
     </select>
-    
+
+
+    <select id="selectOptionWithVoteCountByPollId" parameterType="long" resultType="map">
+        SELECT
+            o.option_id,
+            o.option_text,
+            COUNT(r.record_id) AS voteCount
+        FROM poll_option o
+                 LEFT JOIN poll_record r ON o.option_id = r.option_id
+        WHERE o.poll_id = #{pollId}
+        GROUP BY o.option_id, o.option_text
+    </select>
+
+
     <select id="selectPollOptionByOptionId" parameterType="Long" resultMap="PollOptionResult">
         <include refid="selectPollOptionVo"/>
         where option_id = #{optionId}
     </select>
+
 
     <insert id="insertPollOption" parameterType="PollOption" useGeneratedKeys="true" keyProperty="optionId">
         insert into poll_option
@@ -63,4 +84,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{optionId}
         </foreach>
     </delete>
+
+    <select id="selectPollOptionByPollId" parameterType="Long" resultMap="PollOptionResult">
+        select option_id, poll_id, option_text, vote_count from poll_option where poll_id = #{pollId}
+    </select>
+
+
+
 </mapper>

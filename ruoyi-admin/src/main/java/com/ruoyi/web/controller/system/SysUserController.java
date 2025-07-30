@@ -3,6 +3,8 @@ package com.ruoyi.web.controller.system;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletResponse;
+
+import com.ruoyi.common.exception.ServiceException;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -22,6 +24,7 @@ import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.domain.entity.SysDept;
 import com.ruoyi.common.core.domain.entity.SysRole;
 import com.ruoyi.common.core.domain.entity.SysUser;
+import com.ruoyi.common.core.domain.model.OtpLoginBody;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.SecurityUtils;
@@ -30,6 +33,7 @@ import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.system.service.ISysPostService;
 import com.ruoyi.system.service.ISysRoleService;
 import com.ruoyi.system.service.ISysUserService;
+import com.ruoyi.system.service.IOtpService;
 
 /**
  * 用户信息
@@ -37,7 +41,7 @@ import com.ruoyi.system.service.ISysUserService;
  * @author ruoyi
  */
 @RestController
-@RequestMapping("/system/user")
+@RequestMapping("/api/system/user")
 public class SysUserController extends BaseController
 {
     @Autowired
@@ -49,11 +53,14 @@ public class SysUserController extends BaseController
     @Autowired
     private ISysPostService postService;
 
+    @Autowired
+    private IOtpService otpService;
+
+
     /**
      * 获取用户列表
      */
-    @PreAuthorize("@ss.hasPermi('system:user:list')")
-    @GetMapping("/list")
+    @PostMapping("/list")
     public TableDataInfo list(SysUser user)
     {
         startPage();
@@ -236,6 +243,30 @@ public class SysUserController extends BaseController
         roleService.checkRoleDataScope(roleIds);
         userService.insertUserAuth(userId, roleIds);
         return success();
+    }
+
+    @PostMapping("/resetPwdByOtp")
+    public AjaxResult resetPwdByOtp(@RequestBody OtpLoginBody body) {
+        String email = body.getEmail();
+        String otp = body.getOtp();
+        String newPassword = body.getNewPassword();
+
+        // 验证 OTP 是否正确
+        boolean valid = otpService.verifyOtp(email, otp);
+        if (!valid) {
+            throw new ServiceException("Invalid OTP");
+        }
+
+        // 根据邮箱查找用户
+        SysUser user = userService.selectUserByEmail(email);
+        if (user == null) {
+            throw new ServiceException("User not found");
+        }
+
+        // 重置密码
+        user.setPassword(SecurityUtils.encryptPassword(newPassword));
+        user.setUpdateBy("system"); // 或 getUsername() 如果需要记录谁操作的
+        return toAjax(userService.resetPwd(user));
     }
 
 }

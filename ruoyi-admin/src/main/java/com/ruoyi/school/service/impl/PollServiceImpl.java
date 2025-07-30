@@ -4,6 +4,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.school.mapper.PollMapper;
+import com.ruoyi.school.mapper.PollRecordMapper;
 import com.ruoyi.school.domain.Poll;
 import com.ruoyi.school.service.IPollService;
 
@@ -18,6 +19,10 @@ public class PollServiceImpl implements IPollService
 {
     @Autowired
     private PollMapper pollMapper;
+
+    @Autowired
+    private PollRecordMapper pollRecordMapper;
+
 
     /**
      * 查询poll
@@ -90,4 +95,7 @@ public class PollServiceImpl implements IPollService
     {
         return pollMapper.deletePollByPollId(pollId);
     }
+
+
+
 }

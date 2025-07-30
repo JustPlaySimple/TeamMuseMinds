@@ -58,4 +58,7 @@ public interface PollRecordMapper
      * @return 结果
      */
     public int deletePollRecordByRecordIds(Long[] recordIds);
+
+    public int countUserVotes(PollRecord pollRecord);
+
 }
